@@ -36,6 +36,20 @@ class _EchelonAppState extends State<EchelonApp> {
   final CartManager _cartManager = CartManager();
   final OrderManager _orderManager = OrderManager();
 
+  Restaurant? _findVehicleById(String? id) {
+    if (id == null) {
+      return null;
+    }
+
+    for (final restaurant in restaurants) {
+      if (restaurant.id == id) {
+        return restaurant;
+      }
+    }
+
+    return null;
+  }
+
   late final _router = GoRouter(
     initialLocation: '/login',
     redirect: _appRedirect,
@@ -67,8 +81,10 @@ class _EchelonAppState extends State<EchelonApp> {
           GoRoute(
             path: 'vehicle/:id',
             builder: (context, state) {
-              final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
-              final restaurant = restaurants[id];
+              final restaurant = _findVehicleById(state.pathParameters['id']);
+              if (restaurant == null) {
+                return const _VehicleNotFoundPage();
+              }
               return RestaurantPage(
                 restaurant: restaurant,
                 cartManager: _cartManager,
@@ -81,9 +97,7 @@ class _EchelonAppState extends State<EchelonApp> {
     ],
     errorPageBuilder: (context, state) => MaterialPage(
       key: state.pageKey,
-      child: Scaffold(
-        body: Center(child: Text(state.error.toString())),
-      ),
+      child: const _VehicleNotFoundPage(),
     ),
   );
 
@@ -145,6 +159,48 @@ class _EchelonAppState extends State<EchelonApp> {
           margin: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(28)),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VehicleNotFoundPage extends StatelessWidget {
+  const _VehicleNotFoundPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.no_crash_outlined,
+                size: 56,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'That vehicle is no longer available.',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Return to Discover to choose another Echelon car.',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: () => context.go('/${EchelonTab.discover.value}'),
+                child: const Text('Back to Discover'),
+              ),
+            ],
           ),
         ),
       ),

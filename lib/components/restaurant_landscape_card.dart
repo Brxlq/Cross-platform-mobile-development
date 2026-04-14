@@ -20,6 +20,8 @@ class RestaurantLandscapeCard extends StatefulWidget {
 class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
   bool _isFavorited = false;
 
+  String get _heroTag => 'vehicle-image-${widget.restaurant.id}';
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context)
@@ -37,7 +39,13 @@ class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(widget.restaurant.imageUrl, fit: BoxFit.cover),
+                  Hero(
+                    tag: _heroTag,
+                    child: Image.network(
+                      widget.restaurant.imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -111,7 +119,7 @@ class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${widget.restaurant.priceLabel} • '
+                          '${widget.restaurant.priceLabel} | '
                           '${widget.restaurant.getRatingAndDistance()}',
                           style: textTheme.bodyMedium,
                         ),

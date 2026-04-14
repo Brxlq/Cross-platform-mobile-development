@@ -34,21 +34,15 @@ class PostSection extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 132,
-            child: ListView.separated(
-              primary: false,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 320,
-                  child: PostCard(post: posts[index]),
-                );
-              },
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
-            ),
+          ListView.separated(
+            primary: false,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              return PostCard(post: posts[index]);
+            },
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
           ),
         ],
       ),

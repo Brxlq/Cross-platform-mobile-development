@@ -13,7 +13,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.of(context).size.width > 900;
+    final isWide = MediaQuery.of(context).size.width > 960;
 
     return Scaffold(
       body: DecoratedBox(
@@ -22,25 +22,26 @@ class LoginPage extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF08111E),
-              Color(0xFF10213A),
-              Color(0xFF1A3A67),
+              Color(0xFFF5F7FA),
+              Color(0xFFE6EEF8),
+              Color(0xFFD7E7F8),
             ],
           ),
         ),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1200),
+              constraints: const BoxConstraints(maxWidth: 1180),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: isWide
                     ? Row(
                         children: [
-                          const Expanded(child: _LoginHero()),
+                          const Expanded(child: _WelcomePanel()),
                           const SizedBox(width: 24),
                           Expanded(
-                            child: Center(
+                            child: Align(
+                              alignment: Alignment.center,
                               child: ConstrainedBox(
                                 constraints:
                                     const BoxConstraints(maxWidth: 460),
@@ -53,8 +54,8 @@ class LoginPage extends StatelessWidget {
                     : SingleChildScrollView(
                         child: Column(
                           children: [
-                            const _LoginHero(compact: true),
-                            const SizedBox(height: 24),
+                            const _WelcomePanel(compact: true),
+                            const SizedBox(height: 20),
                             LoginForm(onLogIn: onLogIn),
                           ],
                         ),
@@ -68,8 +69,8 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class _LoginHero extends StatelessWidget {
-  const _LoginHero({this.compact = false});
+class _WelcomePanel extends StatelessWidget {
+  const _WelcomePanel({this.compact = false});
 
   final bool compact;
 
@@ -84,53 +85,96 @@ class _LoginHero extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0x335EC8FF), Color(0x11FFFFFF)],
+          colors: [Color(0xFF0B1220), Color(0xFF184B84)],
         ),
-        border: Border.all(color: const Color(0x33FFFFFF)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x22000000),
+            blurRadius: 24,
+            offset: Offset(0, 14),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: compact ? 72 : 92,
-            height: compact ? 72 : 92,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              color: Colors.white,
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(999),
             ),
-            child: const Icon(
-              Icons.directions_car_filled_rounded,
-              size: 42,
-              color: Color(0xFF10213A),
+            child: const Text(
+              'Welcome back to Echelon',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: compact ? 24 : 36),
           Text(
-            'Echelon',
+            'Friendly city driving starts here.',
             style: textTheme.displaySmall?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w800,
               letterSpacing: -1.5,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
-            'Premium car sharing for commutes, airport runs, '
-            'and last-minute escapes.',
+            'Browse real cars, plan pickup and return times, and manage '
+            'every reservation from one calm dashboard.',
             style: textTheme.titleMedium?.copyWith(
               color: Colors.white.withValues(alpha: 0.82),
-              height: 1.4,
+              height: 1.45,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: compact ? 24 : 32),
           const Wrap(
             spacing: 12,
             runSpacing: 12,
             children: [
-              _HeroChip(label: 'Unlock in seconds'),
-              _HeroChip(label: 'Electric and performance fleets'),
-              _HeroChip(label: 'Insurance built in'),
+              _HeroBadge(label: 'Fast pickup scheduling'),
+              _HeroBadge(label: 'Astana hubs across the city'),
+              _HeroBadge(label: 'Electric and premium classes'),
             ],
+          ),
+          SizedBox(height: compact ? 24 : 32),
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Today with Echelon',
+                  style: textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const _HeroStat(
+                  value: '20',
+                  label: 'cars ready across all classes',
+                ),
+                const SizedBox(height: 10),
+                const _HeroStat(
+                  value: '4.8',
+                  label: 'average fleet rating this week',
+                ),
+                const SizedBox(height: 10),
+                const _HeroStat(
+                  value: '24/7',
+                  label: 'support for late returns and changes',
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -138,8 +182,8 @@ class _LoginHero extends StatelessWidget {
   }
 }
 
-class _HeroChip extends StatelessWidget {
-  const _HeroChip({required this.label});
+class _HeroBadge extends StatelessWidget {
+  const _HeroBadge({required this.label});
 
   final String label;
 
@@ -148,11 +192,51 @@ class _HeroChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
-        color: const Color(0x1AFFFFFF),
-        border: Border.all(color: const Color(0x33FFFFFF)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
-      child: Text(label, style: const TextStyle(color: Colors.white)),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroStat extends StatelessWidget {
+  const _HeroStat({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 58,
+          child: Text(
+            value,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -177,6 +261,15 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
+  void _submit() {
+    widget.onLogIn(
+      Credentials(
+        _usernameController.text.trim(),
+        _passwordController.text,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -184,39 +277,49 @@ class _LoginFormState extends State<LoginForm> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(32),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 24,
+            offset: Offset(0, 14),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Sign in',
+            'Sign in to continue',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Use any username and password to enter the Echelon demo.',
+            'Any username and passcode will open the demo, so you can focus '
+            'on exploring the product experience.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
           TextField(
             controller: _usernameController,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              hintText: 'Driver email',
+              labelText: 'Username or email',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           TextField(
             controller: _passwordController,
             obscureText: true,
+            onSubmitted: (_) => _submit(),
             decoration: InputDecoration(
-              hintText: 'Passcode',
+              labelText: 'Passcode',
               prefixIcon: const Icon(Icons.lock_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -227,35 +330,37 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             width: double.infinity,
             child: FilledButton(
-              onPressed: () {
-                widget.onLogIn(
-                  Credentials(
-                    _usernameController.value.text,
-                    _passwordController.value.text,
-                  ),
-                );
-              },
+              onPressed: _submit,
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
               ),
               child: const Text('Enter Echelon'),
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Icon(
-                Icons.verified_user_outlined,
-                size: 18,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text(
-                  'Coverage, support, and roadside assistance included.',
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite_outline,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Friendly reminder: the demo accepts any credentials.',
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

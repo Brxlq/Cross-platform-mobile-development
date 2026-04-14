@@ -45,7 +45,7 @@ class Restaurant {
 
   String getRatingAndDistance() {
     return 'Rated ${rating.toStringAsFixed(1)} | '
-        '${distance.toStringAsFixed(1)} mi away';
+        '${distance.toStringAsFixed(1)} km away';
   }
 
   String get priceLabel => '\$${hourlyRate.toStringAsFixed(0)}/hr';

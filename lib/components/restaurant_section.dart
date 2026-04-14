@@ -48,11 +48,29 @@ class RestaurantSection extends StatelessWidget {
             ),
           ),
           if (restaurants.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'No vehicles available in this class right now.',
-                style: Theme.of(context).textTheme.bodyLarge,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'No vehicles match this selection right now.',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Try another class, search term, or quick filter '
+                    'to see more cars.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
               ),
             )
           else

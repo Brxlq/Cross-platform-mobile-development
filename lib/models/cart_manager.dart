@@ -23,7 +23,23 @@ class CartManager {
 
   // Add a new item to the cart
   void addItem(CartItem item) {
-    _items.add(item);
+    final existingIndex = _items.indexWhere(
+      (existingItem) =>
+          existingItem.name == item.name && existingItem.price == item.price,
+    );
+
+    if (existingIndex == -1) {
+      _items.add(item);
+      return;
+    }
+
+    final existingItem = _items[existingIndex];
+    _items[existingIndex] = CartItem(
+      id: existingItem.id,
+      name: existingItem.name,
+      price: existingItem.price,
+      quantity: existingItem.quantity + item.quantity,
+    );
   }
 
   // Remove an item from the cart by its id

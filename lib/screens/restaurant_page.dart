@@ -26,8 +26,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
   static const double largeScreenPercentage = 0.9;
   static const double maxWidth = 1000;
   static const desktopThreshold = 700;
-  static const double drawerWidth = 375.0;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String get _heroTag => 'vehicle-image-${widget.restaurant.id}';
 
   double _calculateConstrainedWidth(double screenWidth) {
     return (screenWidth > desktopThreshold
@@ -60,25 +60,15 @@ class _RestaurantPageState extends State<RestaurantPage> {
             padding: const EdgeInsets.only(left: 16, right: 16, top: 64),
             child: Stack(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: NetworkImage(widget.restaurant.imageUrl),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Hero(
+                    tag: _heroTag,
+                    child: Image.network(
+                      widget.restaurant.imageUrl,
                       fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 16,
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: const Icon(
-                      Icons.directions_car,
-                      color: Colors.white,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   ),
                 ),
@@ -122,7 +112,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
             ),
             const SizedBox(height: 16),
             FilledButton.icon(
-              onPressed: openDrawer,
+              onPressed: _showCheckoutSheet,
               icon: const Icon(Icons.key),
               label: const Text('Rent This Car'),
             ),
@@ -206,33 +196,52 @@ class _RestaurantPageState extends State<RestaurantPage> {
     );
   }
 
-  Widget _buildEndDrawer() {
-    return SizedBox(
-      width: drawerWidth,
-      child: Drawer(
-        child: CheckoutPage(
-          cartManager: widget.cartManager,
-          didUpdate: () {
-            setState(() {});
+  Future<void> _showCheckoutSheet() {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.86,
+          minChildSize: 0.55,
+          maxChildSize: 0.96,
+          expand: false,
+          snap: true,
+          snapSizes: const [0.55, 0.86, 0.96],
+          builder: (context, scrollController) {
+            return ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+              child: Material(
+                color: Theme.of(context).colorScheme.surface,
+                child: CheckoutPage(
+                  cartManager: widget.cartManager,
+                  didUpdate: () {
+                    setState(() {});
+                  },
+                  vehicle: widget.restaurant,
+                  scrollController: scrollController,
+                  showAppBar: false,
+                  onSubmit: (order) {
+                    widget.ordersManager.addOrder(order);
+                    Navigator.of(sheetContext).pop();
+                    this.context.go('/${EchelonTab.trips.value}');
+                  },
+                ),
+              ),
+            );
           },
-          vehicle: widget.restaurant,
-          onSubmit: (order) {
-            widget.ordersManager.addOrder(order);
-            context.pop();
-            context.go('/${EchelonTab.trips.value}');
-          },
-        ),
-      ),
+        );
+      },
     );
-  }
-
-  void openDrawer() {
-    scaffoldKey.currentState!.openEndDrawer();
   }
 
   Widget _buildFloatingActionButton() {
     return FloatingActionButton.extended(
-      onPressed: openDrawer,
+      onPressed: _showCheckoutSheet,
       tooltip: 'Reservation',
       icon: const Icon(Icons.event_available),
       label: Text(
@@ -249,8 +258,6 @@ class _RestaurantPageState extends State<RestaurantPage> {
     final constrainedWidth = _calculateConstrainedWidth(screenWidth);
 
     return Scaffold(
-      key: scaffoldKey,
-      endDrawer: _buildEndDrawer(),
       floatingActionButton: _buildFloatingActionButton(),
       body: Center(
         child: SizedBox(
